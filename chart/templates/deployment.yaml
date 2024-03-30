@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.exporter.name }}
+  labels:
+    app: {{ .Values.exporter.name }}
+    group: {{ .Values.exporter.group }}
+spec:
+  replicas: {{ .Values.exporter.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.exporter.name }}
+  strategy:
+    type: {{ .Values.exporter.strategyType }}
+  template:
+    metadata:
+      {{- if .Values.forceRollout }}
+      #helm upgrade do not recreate pods if there is no change, so we added rollme annotation.
+      #https://v3.helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments   
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+      labels:
+        app: {{ .Values.exporter.name }}
+        group: {{ .Values.exporter.group }}
+    spec:
+      {{- with .Values.exporter.container.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.exporter.container.image.repository }}"
+          imagePullPolicy: {{ .Values.exporter.container.image.pullPolicy }}
+          ports:
+            - name: {{ .Values.exporter.service.app.http.name }} 
+              containerPort: {{ .Values.exporter.service.app.http.targetPort }}
+              protocol: {{ .Values.exporter.service.app.http.portType }}            
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: {{ .Values.exporter.env.aspnetcoreEnv }}
+            - name: Configuration__ComputingLocation
+              value: {{ .Values.exporter.env.computingLocation}}
+            - name: Configuration__ForecastDataEndpointTemplate
+              value: {{ .Values.exporter.env.forecastDataEndpointTemplate}}
+            - name: ASPNETCORE_HTTP_PORTS
+              value: {{ .Values.exporter.service.app.http.port | quote}}
+      restartPolicy: Always      
+

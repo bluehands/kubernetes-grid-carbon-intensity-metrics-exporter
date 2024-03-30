@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Values.exporter.service.monitor.name }} 
+  labels:
+    group: {{ .Values.exporter.group }}
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/name: kepler
+    release: prometheus
+spec:
+  endpoints:
+  - interval: {{ .Values.exporter.service.monitor.interval }}
+    path: /metrics
+    port: http
+    scheme: http    
+  jobLabel: app.kubernetes.io/name
+  selector:
+    matchLabels:
+      app: {{ .Values.exporter.name }} 

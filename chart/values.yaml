@@ -1,0 +1,29 @@
+# Default values for grid-carbon-intensity-metrics-exporter.
+exporter:
+  replicaCount: 1
+  forceRollout: false
+  name: grid-carbon-intensity-metrics-exporter
+  group: app
+  strategyType: Recreate
+  container:
+    image:
+      repository: ghcr.io/bluehands/kubernetes-grid-carbon-intensity-metrics-exporter:latest
+      pullPolicy: IfNotPresent
+  service:
+    app: 
+      name: grid-carbon-intensity-metrics-exporter-svc
+      type: ClusterIP
+      http:
+        name: http
+        portType: TCP
+        nodePort: 31084
+        port: 80
+        targetPort: 80      
+    monitor:
+      name: grid-carbon-intensity-metrics-exporter-monitor
+      interval: 10m  
+  env:
+    aspnetcoreEnv: Production
+    computingLocation: de
+    forecastDataEndpointTemplate: https://carbonawarecomputing.blob.core.windows.net/forecasts/{0}.json    
+  
