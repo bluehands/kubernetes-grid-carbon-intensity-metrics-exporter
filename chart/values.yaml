@@ -14,11 +14,11 @@ exporter:
       name: grid-carbon-intensity-metrics-exporter-svc
       type: ClusterIP
       http:
-        name: http
+        name: web
         portType: TCP
         nodePort: 31084
-        port: 80
-        targetPort: 80      
+        port: 8080
+        targetPort: 8080      
     monitor:
       name: grid-carbon-intensity-metrics-exporter-monitor
       interval: 10m  

@@ -44,6 +44,6 @@ spec:
             - name: Configuration__ForecastDataEndpointTemplate
               value: {{ .Values.exporter.env.forecastDataEndpointTemplate}}
             - name: ASPNETCORE_HTTP_PORTS
-              value: {{ .Values.exporter.service.app.http.port | quote}}
+              value: {{ .Values.exporter.service.app.http.targetPort | quote}}
       restartPolicy: Always      
 

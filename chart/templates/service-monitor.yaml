@@ -5,13 +5,13 @@ metadata:
   labels:
     group: {{ .Values.exporter.group }}
     app.kubernetes.io/component: exporter
-    app.kubernetes.io/name: kepler
+    app.kubernetes.io/name: {{ .Values.exporter.name }} 
     release: prometheus
 spec:
   endpoints:
   - interval: {{ .Values.exporter.service.monitor.interval }}
     path: /metrics
-    port: http
+    port: {{ .Values.exporter.service.app.http.name }}
     scheme: http    
   jobLabel: app.kubernetes.io/name
   selector:
